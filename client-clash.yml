@@ -1,6 +1,8 @@
 mixed-port: 7890
 mode: rule
-log-level: debug
+
+# info / warning / error / debug / silent
+log-level: warning
 
 dns:
   enable: true
@@ -10,40 +12,24 @@ dns:
 tun:
   enable: true
   stack: gvisor
-  # dns-hijack:
-  #   - 8.8.8.8:53
-  #   - tcp://8.8.8.8:53
-  #   - any:53
-  #   - tcp://any:53
-  auto-route: true # manage `ip route` and `ip rules`
-  auto-redir: true # manage nftable REDIRECT
-  auto-detect-interface: true # 与 `interface-name` 冲突
+  auto-route: true
+  auto-redir: true
+  auto-detect-interface: true
 
 proxies:
   - name: "GameAcc-HK"
     type: ss
-    # interface-name: eth0
-    # routing-mark: 1234
     server: 123.123.123.123
     port: 17881
     cipher: chacha20-ietf-poly1305
-    password: "xxxxxxxxxxxxxxxxxxxxxxxxxxx"
-    # tls: true
-    # skip-cert-verify: true
+    password: "xxxxxxxxxxxxxxxxxxxxx"
+    tfo: true
     udp: true
 
-proxy-groups:
-  - name: "GameAccGroup-HK"
-    type: relay
-    proxies:
-      - GameAcc-HK
-  - name: "GLOBAL"
-    type: relay
-    proxies:
-      - GameAcc-HK
-
 rules:
-  - PROCESS-NAME,curl,GameAcc-HK
+  - IP-CIDR,169.254.169.0/24,REJECT
+  - PROCESS-NAME,wineserver,GameAcc-HK
+  - PROCESS-NAME,wine64-preloader,GameAcc-HK
   - PROCESS-NAME,r5apex.exe,GameAcc-HK
   - PROCESS-NAME,r5apex_dx12.exe,GameAcc-HK
   - MATCH,DIRECT

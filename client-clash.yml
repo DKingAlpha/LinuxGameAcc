@@ -17,19 +17,25 @@ tun:
   auto-detect-interface: true
 
 proxies:
-  - name: "GameAcc-HK"
+  - name: GameAcc-HK
     type: ss
     server: 123.123.123.123
     port: 17881
     cipher: chacha20-ietf-poly1305
-    password: "xxxxxxxxxxxxxxxxxxxxx"
+    password: xxxxxxxxxxxxxxxxxxxxx
     tfo: true
     udp: true
 
+proxy-groups:
+  - name: GameAcc
+    type: select
+    proxies:
+      - GameAcc-HK
+
 rules:
   - IP-CIDR,169.254.169.0/24,REJECT
-  - PROCESS-NAME,wineserver,GameAcc-HK
-  - PROCESS-NAME,wine64-preloader,GameAcc-HK
-  - PROCESS-NAME,r5apex.exe,GameAcc-HK
-  - PROCESS-NAME,r5apex_dx12.exe,GameAcc-HK
+  - PROCESS-NAME,wineserver,GameAcc
+  - PROCESS-NAME,wine64-preloader,GameAcc
+  - PROCESS-NAME,r5apex.exe,GameAcc
+  - PROCESS-NAME,r5apex_dx12.exe,GameAcc
   - MATCH,DIRECT

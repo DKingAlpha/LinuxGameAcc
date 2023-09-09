@@ -1,0 +1,49 @@
+mixed-port: 7890
+mode: rule
+log-level: debug
+
+dns:
+  enable: true
+  listen: 0.0.0.0:5553
+  fake-ip-range: 198.18.0.1/16
+
+tun:
+  enable: true
+  stack: gvisor
+  # dns-hijack:
+  #   - 8.8.8.8:53
+  #   - tcp://8.8.8.8:53
+  #   - any:53
+  #   - tcp://any:53
+  auto-route: true # manage `ip route` and `ip rules`
+  auto-redir: true # manage nftable REDIRECT
+  auto-detect-interface: true # 与 `interface-name` 冲突
+
+proxies:
+  - name: "GameAcc-HK"
+    type: ss
+    # interface-name: eth0
+    # routing-mark: 1234
+    server: 123.123.123.123
+    port: 17881
+    cipher: chacha20-ietf-poly1305
+    password: "xxxxxxxxxxxxxxxxxxxxxxxxxxx"
+    # tls: true
+    # skip-cert-verify: true
+    udp: true
+
+proxy-groups:
+  - name: "GameAccGroup-HK"
+    type: relay
+    proxies:
+      - GameAcc-HK
+  - name: "GLOBAL"
+    type: relay
+    proxies:
+      - GameAcc-HK
+
+rules:
+  - PROCESS-NAME,curl,GameAcc-HK
+  - PROCESS-NAME,r5apex.exe,GameAcc-HK
+  - PROCESS-NAME,r5apex_dx12.exe,GameAcc-HK
+  - MATCH,DIRECT
